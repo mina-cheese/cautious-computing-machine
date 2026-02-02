@@ -6,9 +6,52 @@ editor: visual
 ---
 
 ```{r}
+library(pracma)
 ```
 
 
 ```{r}
+odd_comp <- c(9, 15, 21, 25, 27, 33, 35, 39, 45, 49, 51, 55, 57, 63, 65, 69, 75, 77, 81, 85, 87, 91, 93, 95, 99) # list of odd composites
+
+primes<- primes(10^6) # list of primes
+
+diff <- diff(primes) # prime differences
+```
+
+
+```{r}
+find_next_cluster_prime <- function(n, primes, diff, odd_comp) {
+  current_prime <- primes[n]
+  M <- 0
+
+  repeat {
+    d <- diff[n]
+
+    if (d > 6) {
+      for (t0 in odd_comp[odd_comp <= d + 1]) {
+        m <- 0
+        t <- t0
+
+        repeat {
+          m <- m + 1
+          t <- t + diff[n + m]
+
+          if (isprime(t)) break
+        }
+
+        if (m > M) M <- m
+      }
+    }
+
+    n <- n + 1
+    current_prime <- current_prime + d
+    M <- M - 1
+
+    if (M <= 0) break
+  }
+
+  return(n)
+}
+
 ```
 
