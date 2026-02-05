@@ -23,6 +23,8 @@ $M$ is the maximum number of primes to the next possible cluster prime, and chan
 
 # Implementing the Algorithm
 
+At the minimum, the algorithm requires us to have a "small" list of odd composite numbers `odd_comp` and a list of prime differences `diff[n]`$=p_{n+1}-p_n$. The actual values of the primes themselves are not necessary for the algorithm to perform. However, since we now have advanced technology, we can just call a list of primes and make our lives easier (?). It def makes it easier to spot check at least!
+
 ```{r}
 odd_comp <- c(9, 15, 21, 25, 27, 33, 35, 39, 45, 49, 51, 55, 57, 63, 65, 69, 75, 77, 81, 85, 87, 91, 93, 95, 99) # list of odd composites
 
@@ -31,9 +33,11 @@ primes<- primes(10^6) # list of primes
 diff <- diff(primes) # prime differences
 ```
 
+The algorithm as described above has been encoded into the following:
+
 ```{r}
 find_next_cluster_prime <- function(n, primes, diff, odd_comp) {
-  current_prime <- primes[n]
+  #current_prime <- primes[n]
   M <- 0
 
   repeat {
@@ -41,12 +45,12 @@ find_next_cluster_prime <- function(n, primes, diff, odd_comp) {
 
     if (d > 6) {
       for (t0 in odd_comp[odd_comp <= d + 1]) {
-        m <- 0
+        m <- 1
         t <- t0
 
         repeat {
           m <- m + 1
-          t <- t + diff[n + m]
+          t <- t + diff[n + m - 1]
 
           if (isprime(t)==1) break
         }
@@ -69,11 +73,31 @@ find_next_cluster_prime <- function(n, primes, diff, odd_comp) {
 
 ```{r}
 next_n <- find_next_cluster_prime(n=24, primes, diff, odd_comp)
-primes[next_n]
+print(c(next_n, primes[next_n]))
 ```
 
 note: 97 (25th prime) is the first non-cluster prime
+note: tested some small cluster prime values and they all worked. Should write a loop to compile a table
+
+One must be careful when using this function, as it returns the next cluster prime given the index of a *cluster prime*, not just any prime.
+
+We can now run a loop to get a list of cluster primes.
+
+```{r}
+for (n in 1:100) {
+  next_cp <- find_next_cluster_prime(n, primes, diff, odd_comp)
+  
+  print(c(next_cp, primes[next_cp]))
+}
+```
+
+We can also use this algorithm to tabulate the distribution of cluster primes. 
+
+```{r}
+#idk how to do this!!!
+```
+
 
 # Results
 
-nothing cuz ur a fuckin idiot womp womp
+nothing cuz ur an idot womp womp
