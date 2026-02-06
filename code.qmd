@@ -72,31 +72,55 @@ find_next_cluster_prime <- function(n, primes, diff, odd_comp) {
 ```
 
 ```{r}
-next_n <- find_next_cluster_prime(n=24, primes, diff, odd_comp)
+next_n <- find_next_cluster_prime(n=7, primes, diff, odd_comp)
 print(c(next_n, primes[next_n]))
 ```
 
-note: 97 (25th prime) is the first non-cluster prime
-note: tested some small cluster prime values and they all worked. Should write a loop to compile a table
+note: 97 (25th prime) is the first non-cluster prime note: tested some small cluster prime values and they all worked. Should write a loop to compile a table
 
 One must be careful when using this function, as it returns the next cluster prime given the index of a *cluster prime*, not just any prime.
 
 We can now run a loop to get a list of cluster primes.
 
 ```{r}
-for (n in 1:100) {
-  next_cp <- find_next_cluster_prime(n, primes, diff, odd_comp)
+index = 1
+for (j in 1:57) {
+  next_cp <- find_next_cluster_prime(index, primes, diff, odd_comp)
+  index <- next_cp
   
   print(c(next_cp, primes[next_cp]))
 }
 ```
 
-We can also use this algorithm to tabulate the distribution of cluster primes. 
+```{r}
+out <- integer(0)
+
+index <- 1
+for (j in 1:57) {
+  next_cp <- find_next_cluster_prime(index, primes, diff, odd_comp)
+  index <- next_cp
+  
+  out <- c(out, primes[next_cp])
+}
+
+out
+```
+
+
+```{r}
+cps <- c(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 101, 103, 107, 109, 113, 131, 137, 139, 151, 157, 163, 167, 173, 179, 181, 193, 197, 199, 233, 239, 241, 271, 277, 281, 283, 311, 313, 317, 353, 359, 389, 401, 421, 433)
+
+
+
+identical(cps, out)
+```
+
+
+We can also use this algorithm to tabulate the distribution of cluster primes.
 
 ```{r}
 #idk how to do this!!!
 ```
-
 
 # Results
 
