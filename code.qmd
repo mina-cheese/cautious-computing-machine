@@ -6,7 +6,7 @@ editor: visual
 ---
 
 ```{r}
-#library(pracma)
+library(pracma)
 library(primes)
 library(RcppAlgos)
 ```
@@ -193,7 +193,7 @@ count_cluster_primes(1000, primes, diff, odd_comp) # sanity check. there are ind
 Comparing the number of cluster primes to the number of non-cluster primes up to some limit:
 
 ```{r}
-limit <- 1e5
+limit <- 1e9
 test_cp_count <- count_cluster_primes(limit, primes, diff, odd_comp) # number of cluster primes up to the limit
 test_prime_count <- sum(primes <= limit) # number of primes up to the limit
 test_non_cp_count <- prime_count - cp_count # number of non-cluster primes
@@ -206,7 +206,55 @@ Testing to make sure it matches the results in the paper (it does).
 
 # Results
 
+First we compute the cluster primes up to whatever limit:
+
 ```{r}
+cp_list <- integer(0)
+
+index <- 1
+for (j in 1:1e9) {
+  next_cp <- find_next_cluster_prime(index, primes, diff, odd_comp)
+  index <- next_cp
+  
+  cp_list <- c(cp_list, primes[next_cp])
+}
+```
+
+Then we can increment the values and make the table as such:
+
+```{r}
+limits <- 10^(1:7)
+
+results <- data.frame(
+  limit = limits,
+  cluster_primes = NA,
+  non_cluster_primes = NA,
+  twin_primes = NA,
+  primes = NA
+)
+
+for (i in seq_along(limits)) {
+  limit <- limits[i]
+
+  cp_count <- sum(cp_list <= limit)
+  prime_count <- sum(primes <= limit)
+  non_cp_count <- prime_count - cp_count - 1
+  tp_count <- length(twin_primes(min=2, max=limit))
+
+  results$cluster_primes[i] <- cp_count
+  results$non_cluster_primes[i] <- non_cp_count
+  results$twin_primes[i] <- tp_count
+  results$primes[i] <- prime_count
+}
+
+results
+```
+
+
+ignore this below
+
+```{r}
+#ignore this; for making the table but its super inefficient cuz it recomputes everything for each iteration of the step
 limits <- 10^(1:9)
 
 results <- data.frame(
